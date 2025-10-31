@@ -20,13 +20,13 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
+    "lint": "gts lint",
+    "posttest": "npm run lint",
     "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "pretest": "npm run compile"
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
