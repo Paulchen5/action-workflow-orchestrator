@@ -17,6 +17,9 @@
   },
   "license": "MIT",
   "author": "Paulchen5",
+  "engines": {
+    "node": "22"
+  },
   "type": "module",
   "main": "build/index.js",
   "scripts": {
