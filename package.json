@@ -19,7 +19,15 @@
   "author": "Paulchen5",
   "type": "module",
   "main": "dist/index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  },
   "devDependencies": {
     "@types/node": "^24.9.2",
     "eslint": "^9.38.0",
