@@ -19,5 +19,12 @@
   "author": "Paulchen5",
   "type": "module",
   "main": "dist/index.js",
-  "scripts": {}
+  "scripts": {},
+  "devDependencies": {
+    "@types/node": "^24.9.2",
+    "eslint": "^9.38.0",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
 }
