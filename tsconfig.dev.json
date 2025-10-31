@@ -10,5 +10,6 @@
         "skipLibCheck": true,
         "noUncheckedIndexedAccess": true
     },
-    "exclude": ["./eslint.config.ts", "./jest.config.ts", "./build/", "./node_modules/", "./tests/"]
+    "include": ["./tests/**/*"],
+    "exclude": ["./eslint.config.ts", "./jest.config.ts", "./build/", "./node_modules/"]
 }
