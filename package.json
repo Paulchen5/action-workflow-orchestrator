@@ -23,6 +23,8 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
     "lint": "gts lint",
     "posttest": "npm run lint",
     "prepare": "npm run compile",
