@@ -1,0 +1,23 @@
+{
+  "name": "action-workflow-orchestrator",
+  "version": "0.1.0",
+  "description": "This actions helps to manage multiple runs of different GitHub Action workflows which should not interfere with other runs.",
+  "keywords": [
+    "action",
+    "workflow-orchestration",
+    "workflow-runs"
+  ],
+  "homepage": "https://github.com/Paulchen5/action-workflow-orchestrator#readme",
+  "bugs": {
+    "url": "https://github.com/Paulchen5/action-workflow-orchestrator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paulchen5/action-workflow-orchestrator.git"
+  },
+  "license": "MIT",
+  "author": "Paulchen5",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {}
+}
