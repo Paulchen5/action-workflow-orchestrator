@@ -14,17 +14,7 @@
     "prHourlyLimit": 0,
     "reviewers": ["Paulchen5"],
     "semanticCommits": "disabled",
-    "vulnerabilityAlerts": {
-        "labels": ["Security"]
-    },
-    "regexManagers": [
-        {
-            "fileMatch": ["^\\.github/actions/**/.*\\.yml$"],
-            "matchStrings": ["node-version:?\\s?*([\\d.]+)"],
-            "depNameTemplate": "node",
-            "datasourceTemplate": "node"
-        }
-    ],
+    "vulnerabilityAlerts": { "labels": ["Security"] },
     "packageRules": [
         {
             "matchPackageNames": ["node"],

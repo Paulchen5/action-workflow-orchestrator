@@ -1,0 +1,141 @@
+name: Release and Docker Build
+
+on:
+  push:
+    branches:
+      - main
+      - main-test
+
+permissions:
+  contents: read
+
+jobs:
+  check-for-release:
+    runs-on: ubuntu-24.04
+
+    outputs:
+      release: ${{ steps.check_release.outputs.release }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: check-for-releaseing
+        id: check_release
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" =~ ^chore\(release\): v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "release=true" >> $GITHUB_OUTPUT
+          else
+            echo "release=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-push-docker-image:
+    runs-on: ubuntu-24.04
+
+    needs: check-for-release
+
+    env:
+      DOCKER_IMAGE: ghcr.io/paulchen5/action-workflow-orchestrator
+      TAGS: ""
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and export test image to Docker
+        run: |
+          make docker-build VERSION=test
+
+      - name: Test test Docker image
+        run: |
+          docker run --rm ghcr.io/paulchen5/action-workflow-orchestrator:test
+
+      - name: Update version
+        if: ${{ needs.check-for-release.outputs.release }} == 'false'
+        id: get_version_non_release
+        run: |
+          VERSION="$(cat VERSION)+sha.${{ github.sha }}"
+          echo $VERSION > VERSION
+          echo "TAGS=${{ env.DOCKER_IMAGE }}:${VERSION}" >> GITHUB_ENV
+
+      - name: Update version
+        if: ${{ needs.check-for-release.outputs.release }} == 'true'
+        run: |
+          VERSION=$(echo "${{ github.event.head_commit.message }}" | sed -n "s/^chore(release): v\([0-9]\+\.[0-9]\+\.[0-9]\+\)$/\1/p")
+          echo $VERSION > VERSION
+          MAJOR_TAG=$(echo $VERSION | cut -d. -f1)
+          echo "TAGS=${{ env.DOCKER_IMAGE }}:${VERSION},${{ env.DOCKER_IMAGE }}:${MAJOR_TAG},${{ env.DOCKER_IMAGE }}:latest" >> GITHUB_ENV
+
+      - name: Build production Docker image
+        run: |
+          make docker-build
+
+      - name: Tag production Docker image
+        if: ${{ needs.check-for-release.outputs.release }} == 'true'
+        run: |
+          docker tag ghcr.io/paulchen5/action-workflow-orchestrator:latest ${{ env.TAGS }}
+
+      - name: Push production Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ${{ env.TAGS }}
+          platforms: linux/amd64,linux/arm64
+          load: false
+
+  release:
+    needs: check-for-release
+
+    if: ${{ needs.check-for-release.outputs.release }} == 'true'
+
+    runs-on: ubuntu-24.04
+
+    env:
+      MAJOR_TAG: ""
+      TAG: ""
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Project
+        uses: ./.github/actions/setup-project/
+
+      - name: Get Release Tag
+        run: |
+          TAG=$(echo "${{ github.event.head_commit.message }}" | sed -n "s/^chore(release): \(v[0-9]\+\.[0-9]\+\.[0-9]\+\)$/\1/p")
+          echo "TAG=$TAG" >> GITHUB_ENV
+          if [ -z "${{ env.TAG }}" ]; then
+            echo "TAG is empty!"
+            exit 1
+          fi
+
+      - name: Get Major Tag
+        run: |
+          MAJOR_TAG=$(echo $TAG | cut -d. -f1)
+          echo "MAJOR_TAG=$MAJOR_TAG" >> GITHUB_ENV
+          if [ -z "${{ env.MAJOR_TAG }}" ]; then
+            echo "MAJOR_TAG is empty!"
+            exit 1
+          fi
+
+      - name: Create Release with Release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ env.TAG }}
+          tag_name: ${{ env.TAG }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Major Version Tag
+        run: |
+          git tag -f ${{ env.MAJOR_TAG }} ${{ env.TAG }}
+          git push origin ${{ env.MAJOR_TAG }} --force
