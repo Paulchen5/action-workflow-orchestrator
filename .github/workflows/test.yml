@@ -1,0 +1,22 @@
+name: Run Tests
+
+on:
+  push:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: [self-hosted, solinas]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Project
+        uses: ./.github/actions/setup-project/
+
+      - name: Run tests
+        run: npm test
