@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   lint:
-    runs-on: [self-hosted, solinas]
+    runs-on: ubuntu-24.04
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -24,9 +25,14 @@ jobs:
       - name: Renovate config validation
         run: npx --yes --package renovate -- renovate-config-validator
 
+      - name: Run Hadolint
+        run: docker run --rm -i hadolint/hadolint < Dockerfile
+
   format:
-    runs-on: [self-hosted, solinas]
+    runs-on: ubuntu-24.04
+
     needs: [lint]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
