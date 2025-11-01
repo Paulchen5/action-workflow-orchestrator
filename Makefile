@@ -1,7 +1,7 @@
 SHELL			?= /usr/bin/env bash
 DOCKER_USERNAME	?= ghcr.io/paulchen5#must be prefixed with the docker registry name
 DOCKER_IMAGE	?= $(DOCKER_USERNAME)/action-workflow-orchestrator
-VERSION			?= 0.1.0
+VERSION 		?= $(shell cat VERSION)
 
 ### Tools
 DOCKER			?= docker
@@ -10,12 +10,13 @@ NPM 			?= npm
 
 define MAKEFILE_HELP
 Makefile Targets:
-	make build			- Build the Docker image
-	make format			- Format the code using Prettier
-	make help			- Show this help message
-	make lint			- Lint the code using ESLint
-	make push			- Push the Docker image to the registry
-	make test			- Run tests using npm test
+	make docker-build		- Builds the Docker image
+	make format			- Formats the code using Prettier
+	make help			- Shows this help message
+	make lint			- Lints the code using ESLint
+	make docker-push		- Pushes the Docker image to the registry
+	make test			- Runs tests using npm test
+	make version			- Shows the current version
 
 Makefile variables:
 	SHELL				- shell to use (default: /usr/bin/env bash)
@@ -30,14 +31,13 @@ endef
 
 export MAKEFILE_HELP
 
-.PHONY: build
-build:
-	$(DOCKER) build --build-arg version=$(VERSION) -t $(DOCKER_IMAGE):$(VERSION) .
-	$(DOCKER) tag $(DOCKER_IMAGE):$(VERSION) $(DOCKER_IMAGE):latest
+.PHONY: docker-build
+docker-build:
+	$(DOCKER) build --build-arg version=$(VERSION) --platform linux/amd64,linux/arm64 -t $(DOCKER_IMAGE):$(VERSION) .
 
 .PHONY: format
 format:
-	$(NPM) run format
+	$(NPM) run format --silent
 
 .PHONY: help
 help:
@@ -45,18 +45,21 @@ help:
 
 .PHONY: lint
 lint:
-	$(NPM) run lint
-	@if command -v hadolint >/dev/null 2>&1; then
-		@$(HADOLINT) Dockerfile
-	@else
-		@echo "\033[0;33mwarning\033[0m: hadolint is not installed - skipping Dockerfile linting"
-	@fi
+	$(NPM) run lint --silent
+	@if command -v hadolint >/dev/null 2>&1; then \
+		$(HADOLINT) Dockerfile; \
+	else \
+		echo "\033[0;33mwarning\033[0m: hadolint is not installed - skipping Dockerfile linting"; \
+	fi \
 
 .PHONY: push
-push:
+docker-push:
 	$(DOCKER) push $(DOCKER_IMAGE):$(VERSION)
-	$(DOCKER) push $(DOCKER_IMAGE):latest
 
 .PHONY: test
 test:
 	$(NPM) test
+
+.PHONY: version
+version:
+	@echo $(VERSION)
