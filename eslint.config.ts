@@ -19,7 +19,7 @@ const compat = new FlatCompat({
 
 export default defineConfig([
     {
-        ignores: ["**/node_modules/**", "**/build/**"]
+        ignores: ["**/node_modules/**", "**/build/**", "./CHANGELOG.md"]
     },
     {
         files: ["./tests/**/.test.ts"],
