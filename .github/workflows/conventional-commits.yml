@@ -1,25 +1,25 @@
-# Copied from https://github.com/a2aproject/a2a-python/blob/98604e73eb5a70d5dac95a54b625b9cba2331372/.github/workflows/conventional-commits.yml
-name: "Conventional Commits"
+name: "Check PR title is following Conventional Commits"
 
 on:
   pull_request:
     types:
       - opened
+      - reopened
       - edited
       - synchronize
 
 permissions:
-  contents: read
+  pull-requests: read
 
 jobs:
-  main:
+  validate-pr-title:
     permissions:
       pull-requests: read
       statuses: write
 
     name: Validate PR Title
 
-    runs-on: [self-hosted, solinas]
+    runs-on: ubuntu-24.04
 
     steps:
       - name: semantic-pull-request
@@ -28,3 +28,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           validateSingleCommit: false
+
+      - name: Check if PR author is allowed to create releases
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ ^chore\(release\):\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if gh api "repos/${{ github.repository }}/collaborators/${{ github.event.pull_request.user.login }}"; then
+              echo "${{ github.event.pull_request.user.login }} is allowed to create releases."
+            else
+              echo "${{ github.event.pull_request.user.login }} is NOT allowed to create releases."
+              exit 1
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
