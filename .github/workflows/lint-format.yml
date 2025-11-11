@@ -1,0 +1,44 @@
+name: Lint and Format Check
+
+on:
+  push:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Project
+        uses: ./.github/actions/setup-project/
+
+      - name: Run eslint
+        run: npm run lint
+
+      - name: Renovate config validation
+        run: npx --yes --package renovate -- renovate-config-validator
+
+      - name: Run Hadolint
+        run: docker run --rm -i hadolint/hadolint < Dockerfile
+
+  format:
+    runs-on: ubuntu-24.04
+
+    needs: [lint]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Project
+        uses: ./.github/actions/setup-project/
+
+      - name: Check code format
+        run: npm run format-check

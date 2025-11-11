@@ -1,0 +1,60 @@
+{
+  "name": "action-workflow-orchestrator",
+  "version": "0.1.0",
+  "description": "This actions helps to manage multiple runs of different GitHub Action workflows which should not interfere with other runs.",
+  "keywords": [
+    "action",
+    "workflow-orchestration",
+    "workflow-runs"
+  ],
+  "homepage": "https://github.com/Paulchen5/action-workflow-orchestrator#readme",
+  "bugs": {
+    "url": "https://github.com/Paulchen5/action-workflow-orchestrator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paulchen5/action-workflow-orchestrator.git"
+  },
+  "license": "MIT",
+  "author": "Paulchen5",
+  "engines": {
+    "node": "22"
+  },
+  "type": "module",
+  "main": "build/index.js",
+  "scripts": {
+    "clean": "gts clean",
+    "compile": "npm run clean && tsc",
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
+    "get-last-changelog-entry": "conventional-changelog -p conventionalcommits --release-count 0 --stdout",
+    "get-next-version": "node tools/version.js",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "pretest": "npm run compile",
+    "release": "standard-version",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@eslint/json": "^0.13.2",
+    "@eslint/markdown": "^7.5.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.9.2",
+    "conventional-changelog": "^7.1.1",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "conventional-recommended-bump": "^11.2.0",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "gts": "^6.0.2",
+    "jest": "^30.2.0",
+    "jiti": "^2.6.1",
+    "js-yaml": "^4.1.0",
+    "prettier": "^3.6.2",
+    "standard-version": "^9.5.0",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
+  }
+}

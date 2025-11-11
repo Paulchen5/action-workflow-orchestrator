@@ -1,0 +1,43 @@
+name: "Check PR title is following Conventional Commits"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate-pr-title:
+    permissions:
+      pull-requests: read
+      statuses: write
+
+    name: Validate PR Title
+
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: semantic-pull-request
+        uses: amannn/action-semantic-pull-request@v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          validateSingleCommit: false
+
+      - name: Check if PR author is allowed to create releases
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ ^chore\(release\):\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if gh api "repos/${{ github.repository }}/collaborators/$${{ github.event.pull_request.user.login }}"; then
+              echo "${{ github.event.pull_request.user.login }} is allowed to create releases."
+            else
+              echo "${{ github.event.pull_request.user.login }} is NOT allowed to create releases."
+              exit 1
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

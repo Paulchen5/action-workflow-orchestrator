@@ -1,0 +1,46 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:best-practices"],
+    "addLabels": ["Dependencies"],
+    "assignees": ["Paulchen5"],
+    "commitMessagePrefix": "chore(deps):",
+    "commitMessageAction": "Update",
+    "commitMessageTopic": "dependency `{{depName}}`",
+    "commitMessageExtra": "to `{{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{prettyNewMajor}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}`",
+    "commitMessageLowerCase": "never",
+    "pinDigests": true,
+    "schedule": ["at any time"],
+    "timezone": "Europe/Berlin",
+    "prHourlyLimit": 0,
+    "reviewers": ["Paulchen5"],
+    "semanticCommits": "disabled",
+    "vulnerabilityAlerts": { "labels": ["Security"] },
+    "packageRules": [
+        {
+            "matchPackageNames": ["node"],
+            "groupName": "Upgrade Node version",
+            "groupSlug": "upgrade-node-version"
+        },
+        {
+            "matchManagers": ["npm"],
+            "groupName": "Update non-major dependencies",
+            "groupSlug": "update-non-major-dependencies",
+            "matchUpdateTypes": ["minor", "patch"],
+            "schedule": ["* * * * 0"],
+            "postUpdateOptions": ["npmInstallTwice"]
+        },
+        {
+            "matchManagers": ["npm"],
+            "matchUpdateTypes": ["major"],
+            "schedule": ["* * * * 0"],
+            "postUpdateOptions": ["npmInstallTwice"],
+            "dependencyDashboardApproval": true
+        },
+        {
+            "description": "Disable digest pinning for package.json (npm)",
+            "matchManagers": ["npm"],
+            "matchUpdateTypes": ["digest", "pin"],
+            "enabled": false
+        }
+    ]
+}
