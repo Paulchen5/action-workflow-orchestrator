@@ -1,14 +1,4 @@
 {
-    "compilerOptions": {
-        "rootDir": "./src",
-        "outDir": "./build",
-        "strict": true,
-        "esModuleInterop": true,
-        "module": "nodenext",
-        "moduleResolution": "nodenext",
-        "skipLibCheck": true,
-        "noUncheckedIndexedAccess": true
-    },
-    "include": ["./tests/**/*"],
-    "exclude": ["./eslint.config.ts", "./jest.config.ts", "./build/", "./node_modules/"]
+    "extends": "./tsconfig.json",
+    "include": ["./tests/**/*"]
 }
