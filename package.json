@@ -1,6 +1,6 @@
 {
   "name": "action-workflow-orchestrator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This actions helps to manage multiple runs of different GitHub Action workflows which should not interfere with other runs.",
   "keywords": [
     "action",
