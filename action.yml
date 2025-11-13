@@ -5,7 +5,7 @@ description: This workflow intends to extend the GitHub native concurrency featu
 inputs:
   docker-image-version:
     description: The version of the docker image from https://ghcr.io/paulchen5/action-workflow-orchestrator to be used for the workflow run.\nThis input is getting overwritten when setting an own 'docker-image' as input.
-    default: 0.1.0
+    default: 0.1.1
 
   docker-image:
     description: The docker image used for the action to run.\Using this input overwrites the value set by 'docker-image-version'.
