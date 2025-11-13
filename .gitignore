@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # build output
 build/
+
+# macOS
+.DS_Store
