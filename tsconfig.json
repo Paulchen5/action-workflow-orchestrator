@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "rootDir": "./src",
-        "outDir": "./build",
+        "outDir": "./dist",
         "strict": true,
         "esModuleInterop": true,
         "module": "nodenext",
@@ -9,5 +9,5 @@
         "skipLibCheck": true,
         "noUncheckedIndexedAccess": true
     },
-    "exclude": ["./eslint.config.ts", "./jest.config.ts", "./build/", "./node_modules/", "./tests/"]
+    "exclude": ["./eslint.config.ts", "./jest.config.ts", "./dist/", "./node_modules/", "./tests/"]
 }

@@ -3,14 +3,18 @@ name: Workflow Orchestrator
 description: This workflow intends to extend the GitHub native concurrency feature to orchestrate multiple workflows / workflow runs.
 
 inputs:
-  docker-image-version:
-    description: The version of the docker image from https://ghcr.io/paulchen5/action-workflow-orchestrator to be used for the workflow run.\nThis input is getting overwritten when setting an own 'docker-image' as input.
-    default: 0.1.0
+  group:
+    description: >
+      The name of the concurrency group to which this workflow run belongs.
+      All workflow runs with the same group name will be orchestrated.
+    default: ${{ github.run_id }}
 
-  docker-image:
-    description: The docker image used for the action to run.\Using this input overwrites the value set by 'docker-image-version'.
-    default: docker://ghcr.io/paulchen5/action-workflow-orchestrator:${{ inputs.docker-image-version }}
+  github-token:
+    description: Personal access token (PAT) for authenticated git operations in the workflow.
+    default: ${{ github.token }}
 
 runs:
-  using: docker
-  image: ${{ inputs.docker-image }}
+  using: "node20"
+  main: "dist/index.js"
+  post: "dist/post.js"
+  post-if: "success()"
